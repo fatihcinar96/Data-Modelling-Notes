@@ -146,5 +146,78 @@ Entityler arasında kurulan fiziksel ve mantıksal bağlantıları temsil eden y
 <p>
 Sequelize JS,veritabanını nesnelerle eşleştirir.MySQL,MariaDB,SQLite veya PostgreSQL veritabanlarına kolay erişim sağlayan bir ORM'dir.Mevcut veritabanı şemasını yeni bir sürüme dönüştürebilen çok güçlü geçiş mekanizmasına sahiptir.Ayrıca,model yapısını belirterek veritabanı yapısını oluşturabilen veritabanı senkronizasyon mekanizmaları sağlar.<br/>
 Sequelize JS,ORM'in sahip olduğu tüm özelliklere sahiptir.Temel olarak Sequelize JS veritabanı senkronizasyonu,istekli yükleme,çağrışımlar,işlemler ve geçişler için iyi bir desteğe sahiptir.<br/>
-Sequelize JS'in bir başka avantajı da test edilebilir kod yazılmasını sağlar.Testleri çalıştırmak için Mocha benzeri çerçeveler kullanılabilir.
+Sequelize JS'in bir başka avantajı da test edilebilir kod yazılmasını sağlar.Testleri çalıştırmak için Mocha benzeri çerçeveler kullanılabilir.<br/>
+<br/>
+<h3>Sequelize JS kurulumu(PostgreSQL için)</h3>
 </p>
+
+<pre><code>
+    npm install --save sequelize
+    npm install --save pg pg-hstore
+</code></pre>
+
+<h3>Sequelize JS Connection</h3>
+<pre><code>
+    const Sequelize = require('sequelize');
+    const sequelize = new Sequelize('seqDb', 'fatih','test',{
+        host : localhost,
+        dialect : 'postgres',
+        operatorsAliases: false,
+        pool : {
+            max : 10,
+            min : 0,
+            acquire : 30000,
+            idle : 10000
+        }
+    })
+</code></pre>
+
+<h3>Sequelize JS Bağlantı Testi</h3>
+    <p>.authanticate() fonksiyonu kullanılarak aşağıdaki gibi test edilebilir;</p>
+
+<pre><code>
+sequelize
+    .authenticate()
+    .then(()=>{
+        console.log('Bağlantı başarıyla sağlandı.')
+    })
+    .catch(err=>{
+        console.error('Bağlantı başarısız.',err)
+    });
+</code></pre>
+
+<h3>Model Oluşturma</h3>
+<p>Modeller sequelize.define fonksiyonuyla tanımalanabilir.</p>
+<pre><code>
+const User = sequelize.define('user',{
+    firstName : {
+        type : sequelize.STRING
+    },
+    lastName : {
+        type : sequelize.STRING
+    }
+});
+// force : true eğer aynı isimde bir tablo varsa üstüne yazacaktır.
+
+User.sync({force : true}).then(()=>{
+    //tablo oluşturuldu.
+    return User.create({
+        firstName : 'Fatih',
+        lastName : 'Cinar'
+    });
+});
+</code></pre>
+<pre><code>
+    node main.js
+</code></pre>
+<p>
+Bu işlemden sonra,veritabanını kontrol ettiğimizde tablonun oluşturulup verilerin girildiğini göreceğiz.
+</p>
+
+<h3>Sorgu Yazma</h3>
+<p>.findAll() fonksiyonu ile SELECT * komutunu çalıştırabiliriz.</p>
+<pre><code>
+    User.findAll().then(users =>{
+        console.log(users)
+    })
+</code></pre>
